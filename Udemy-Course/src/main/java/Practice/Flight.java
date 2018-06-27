@@ -188,7 +188,5 @@ public class Flight {
 		System.out.println(element.getAttribute("value"));
 
 	}
-	// public static void calenderDateSelection(WebDriver driver, By by, String key)
-	// {
 
 }
