@@ -15,7 +15,7 @@ public class MyWebDriver implements AutoCloseable {
 	public void close() throws Exception {
 		System.out.println("Closing browser in 15sec.");
 		Thread.sleep(15000);
-		webDriver.close();
+		webDriver.quit();
 	}
 
 	public WebDriver getWebDriver() {

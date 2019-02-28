@@ -13,6 +13,10 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.kuldeep.objectrepository.BookingPanel;
+import com.kuldeep.objectrepository.LoginPage;
+import com.kuldeep.utils.ComboBoxUtils;
+
 public class Flight {
 
 	private static List<String> firstNameList = Arrays.asList("Kuldeep", "Vinayak", "Max", "John");
@@ -20,19 +24,22 @@ public class Flight {
 
 	public static void main(String[] args) {
 		System.setProperty("webdriver.gecko.driver", "/home/kuldeep/Downloads/geckodriver");
+
+
+
 		// MyWebDriver driver = new FirefoxDriver();
 		try (MyWebDriver myDriver = new MyWebDriver(new FirefoxDriver())) {
 			WebDriver driver = myDriver.getWebDriver();
-			//driver.manage().window().fullscreen();
+			// driver.manage().window().fullscreen();
 			login(driver);
 			changeProfileCorp(driver);
-
+			BookingPanel panel = new BookingPanel(driver);
 			// from
-			selectAutoSuggest(driver, By.xpath("//div[@id='flight-booking-panel-leaving-from'] //input"), "BOM");
+			selectAutoSuggest(driver, panel.getOrigin(), "BOM");
 			// flight-booking-panel-going-to
 
 			// to
-			selectAutoSuggest(driver, By.xpath("//div[@id='flight-booking-panel-going-to'] //input"), "DELHI");
+			selectAutoSuggest(driver, panel.getDestination(), "DELHI");
 
 			// departure date
 			driver.findElement(By.xpath("//div[@id='flight-booking-panel-depart-date']//button")).click();
@@ -82,33 +89,35 @@ public class Flight {
 			List<WebElement> titles = driver
 					.findElements(By.xpath(".//*[@class='guest-list']//div[@class='v-slot v-slot-pax-title'] //input"));
 			for (WebElement title : titles) {
-				selectComboBox(title, 1);
+				ComboBoxUtils.selectComboBox(title, "Mr");
 			}
 			// driver.findElements(By.id("firstname")).get(1).sendKeys(firstNameList.get(1));
 			for (int i = 0; i < driver.findElements(By.id("firstname")).size(); i++) {
 				driver.findElements(By.id("firstname")).get(i).click();
 				driver.findElements(By.id("firstname")).get(i).clear();
+				Thread.sleep(2000);
 				driver.findElements(By.id("firstname")).get(i).sendKeys(firstNameList.get(i));
+				Thread.sleep(2000);
 				driver.findElements(By.id("firstname")).get(i).sendKeys(Keys.TAB);
-				Thread.sleep(1000);
 			}
 
 			for (int i = 0; i < driver.findElements(By.id("lastname")).size(); i++) {
 				driver.findElements(By.id("lastname")).get(i).click();
 				driver.findElements(By.id("lastname")).get(i).clear();
+				Thread.sleep(2000);
 				driver.findElements(By.id("lastname")).get(i).sendKeys(lastNameList.get(i));
+				Thread.sleep(2000);
 				driver.findElements(By.id("lastname")).get(i).sendKeys(Keys.TAB);
-				Thread.sleep(1000);
 			}
-			
-			for (int i=0; i<driver.findElements(By.id("mm")).size(); i++) {
-				
-				selectComboBox(driver.findElements(By.xpath("//div[@id='mm']//input")).get(i), 10);
+
+			for (int i = 0; i < driver.findElements(By.id("mm")).size(); i++) {
+
+				ComboBoxUtils.selectComboBox(driver.findElements(By.xpath("//div[@id='mm']//input")).get(i), "7");
 			}
-			
-			for(int i =0; i<driver.findElements(By.id("add-meal")).size(); i++) {
+
+			for (int i = 0; i < driver.findElements(By.id("add-meal")).size(); i++) {
 				driver.findElements(By.id("add-meal")).get(i).click();
-				
+
 			}
 
 			/*
@@ -161,9 +170,16 @@ public class Flight {
 	private static void login(WebDriver driver) {
 		driver.get("http://stage.hmatravel.com/travel/");
 		driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-		driver.findElement(By.xpath("//input[@id='userLoginForm:userName']")).sendKeys("happy-hma travels-hsingh");
-		driver.findElement(By.xpath("//input[@id='userLoginForm:password']")).sendKeys("welcome");
-		driver.findElement(By.xpath("//button[@id='userLoginForm:login']")).click();
+		LoginPage login = new LoginPage(driver);
+		login.getUsername().sendKeys("happy-hma travels-hsingh");
+		login.getPassword().sendKeys("welcome");
+		login.getSubmit().click();
+
+		// driver.findElement(By.xpath("//input[@id='userLoginForm:userName']")).sendKeys("happy-hma
+		// travels-hsingh");
+		// driver.findElement(By.xpath("//input[@id='userLoginForm:password']")).sendKeys("welcome");
+		// driver.findElement(By.xpath("//button[@id='userLoginForm:login']")).click();
+
 		System.out.println(driver.getTitle());
 	}
 
@@ -179,14 +195,22 @@ public class Flight {
 
 	}
 
-	public static void selectComboBox(WebElement element, int nthElement) {
-		element.click();
-		for (int i = 1; i < nthElement; i++) {
-			element.sendKeys(Keys.DOWN);
-		}
-		element.sendKeys(Keys.ENTER);
-		System.out.println(element.getAttribute("value"));
-
-	}
+	// public static void selectComboBox(WebElement element, int nthElement) throws
+	// InterruptedException {
+	// element.click();
+	// int i = 0;
+	// String elementValue = element.getAttribute("value");
+	// if (elementValue != null && elementValue.length() > 0) {
+	// i = 1;
+	// }
+	// Thread.sleep(500);
+	// for (; i <= nthElement; i++) {
+	// element.sendKeys(Keys.DOWN);
+	// Thread.sleep(500);
+	// }
+	// element.sendKeys(Keys.ENTER);
+	// System.out.println(element.getAttribute("value"));
+	//
+	// }
 
 }
